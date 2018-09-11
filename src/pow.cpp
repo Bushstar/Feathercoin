@@ -7,6 +7,7 @@
 
 #include "arith_uint256.h"
 #include "chain.h"
+#include "chainparams.h"
 #include "primitives/block.h"
 #include "uint256.h"
 
@@ -19,13 +20,88 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return nProofOfWorkLimit;
 
     int nHeight = pindexLast->nHeight + 1;
+    int nTargetTimespan = params.nPowTargetTimespan;
+    int nTargetSpacing = params.nPowTargetSpacing;
+    int64_t nInterval = nTargetTimespan / nTargetSpacing;
+    int64_t nActualTimespan = 0;
+    int nActualTimespanMax = nTargetTimespan*4;
+    int nActualTimespanMin = nTargetTimespan/4;
+
+    int pindexFirstShortTime = 0;
+    int pindexFirstMediumTime = 0;
+    int nActualTimespanShort = 0;
+    int nActualTimespanMedium = 0;
+    int nActualTimespanLong = 0;
+    int nActualTimespanAvg = 0;
+
+    /*
+    / New eHRC from start for testnet
+    */
+    if (Params().NetworkIDString() == CBaseChainParams::TESTNET ) {
+        nActualTimespan = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
+
+        // 99 / 66 = 1.5 AKA 50% difficulty limiter
+        nActualTimespanMax = nTargetTimespan * 99 / 66;
+        nActualTimespanMin = nTargetTimespan * 66 / 99;
+
+        unsigned int shortInterval = 2;
+        unsigned int mediumInterval = 127;
+        unsigned int longInterval = 480;
+
+        unsigned int shortWeight = 512;
+        unsigned int mediumWeight = 7;
+        unsigned int longWeight = 3;
+
+        const CBlockIndex* pindexFirstLong = pindexLast;
+        for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
+            pindexFirstLong = pindexFirstLong->pprev;
+            if (i == shortInterval - 1)
+                pindexFirstShortTime = pindexFirstLong->GetBlockTime();
+            if (i == mediumInterval - 1)
+                pindexFirstMediumTime = pindexFirstLong->GetBlockTime();
+        }
+
+        if (pindexLast->GetBlockTime() - pindexFirstShortTime != 0)
+            nActualTimespanShort = (pindexLast->GetBlockTime() - pindexFirstShortTime) / shortInterval;
+
+        if (pindexLast->GetBlockTime() - pindexFirstMediumTime != 0)
+            nActualTimespanMedium = (pindexLast->GetBlockTime() - pindexFirstMediumTime) / mediumInterval;
+
+        if (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime() != 0)
+            nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime()) / longInterval;
+
+        nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
+        nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
+
+        nActualTimespan = nActualTimespanAvg + (2 * nTargetTimespan);
+        nActualTimespan /= 3;
+
+        if(nActualTimespan < nActualTimespanMin)
+            nActualTimespan = nActualTimespanMin;
+        if(nActualTimespan > nActualTimespanMax)
+            nActualTimespan = nActualTimespanMax;
+
+        // Retarget
+        arith_uint256 bnNew;
+        bnNew.SetCompact(pindexLast->nBits);
+        bool fShift = bnNew.bits() > 235;
+        if (fShift)
+            bnNew >>= 1;
+        bnNew *= nActualTimespan;
+        bnNew /= nTargetTimespan;
+        if (fShift)
+            bnNew <<= 1;
+
+        const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
+        if (bnNew > bnPowLimit)
+            bnNew = bnPowLimit;
+
+        return bnNew.GetCompact();
+    }
 
     // 4th Hard fork, reset difficulty
     if (nHeight == params.nForkFour)
         return UintToArith256(params.powNeoScryptLimit).GetCompact();
-
-    int nTargetTimespan = params.nPowTargetTimespan;
-    int nTargetSpacing = params.nPowTargetSpacing;
 
     if (nHeight >= params.nForkOne)
         nTargetTimespan = (7 * 24 * 60 * 60) / 8; // 7/8 days
@@ -37,8 +113,6 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nTargetTimespan = 60; // 1 minute timespan
         nTargetSpacing = 60; // 1 minute block
     }
-
-    int64_t nInterval = nTargetTimespan / nTargetSpacing;
 
     bool fHardFork = nHeight == params.nForkOne || nHeight == params.nForkTwo;
 
@@ -77,8 +151,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     if (params.fPowNoRetargeting)
         return pindexLast->nBits;
 
-    int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
-    int nActualTimespanAvg = 0;
+    nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
 
     if (nHeight >= params.nForkTwo && nHeight < params.nForkThree) {
         nInterval *= 4;
@@ -95,8 +168,6 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     if (nHeight >= params.nForkThree) {
         nInterval = 480;
 
-        int pindexFirstShortTime = 0;
-        int pindexFirstMediumTime = 0;
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < nInterval && i < nHeight - 1; i++) {
             pindexFirstLong = pindexFirstLong->pprev;
@@ -105,9 +176,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             if (i == 119)
                 pindexFirstMediumTime = pindexFirstLong->GetBlockTime();
         }
-        int nActualTimespanShort = (pindexLast->GetBlockTime() - pindexFirstShortTime) / 15;
-        int nActualTimespanMedium = (pindexLast->GetBlockTime() - pindexFirstMediumTime)/120;
-        int nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime())/480;
+        nActualTimespanShort = (pindexLast->GetBlockTime() - pindexFirstShortTime) / 15;
+        nActualTimespanMedium = (pindexLast->GetBlockTime() - pindexFirstMediumTime)/120;
+        nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime())/480;
 
         nActualTimespanAvg = (nActualTimespanShort + nActualTimespanMedium + nActualTimespanLong) / 3;
     }
@@ -117,10 +188,6 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespan = nActualTimespanAvg + 3 * nTargetTimespan;
         nActualTimespan /= 4;
     }
-
-    // The initial settings (4.0 difficulty limiter)
-    int nActualTimespanMax = nTargetTimespan*4;
-    int nActualTimespanMin = nTargetTimespan/4;
 
     // The 1st hard fork (1.4142857 aka 41% difficulty limiter)
     if (nHeight >= params.nForkOne && nHeight < params.nForkTwo) {

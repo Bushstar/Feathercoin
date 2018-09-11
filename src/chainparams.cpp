@@ -182,8 +182,8 @@ public:
         consensus.BIP34Hash = uint256S("0x03d3e9191e34ca47e86b1dd8d22213f20c6058bd2533eea04ab7d3655eb13646");
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.powNeoScryptLimit = uint256S("0000003fffff0000000000000000000000000000000000000000000000000000");
-        consensus.nPowTargetTimespan = 3.5 * 24 * 60 * 60; // two weeks
-        consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 mins
+        consensus.nPowTargetTimespan = 60; // two weeks
+        consensus.nPowTargetSpacing = 60; // 2.5 mins
         consensus.checkpointPubKey = "0421c27bb6580b05dcda1f47e59274489f094a3e85d96bbc38d5befd10eee97397ec8a93b6d8d79e8370239a8f39adf66322b41dafe83066bbcee6144e4c41a699";
         consensus.vAlertPubKey = ParseHex("04ee30d11e8de34c8c40410d7aefed4865e9d9978335239dd4869e62651030d9a18332537c03ff24580fe668cfcdf087341715b56b1c0788b600631ed4445d3280");
         consensus.fPowAllowMinDifficultyBlocks = true;
@@ -224,11 +224,12 @@ public:
         consensus.nTimeLimit = 100;
         consensus.nVersionBitSwitch = 400;
         consensus.nNeoScryptSwitch = 1413936000;
-        consensus.nNeoScryptFork = 1486758327;
+        consensus.nNeoScryptFork = -1;
 
-        genesis = CreateGenesisBlock(1396255061, 677449, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1536656597, 529517, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x7734b3734ab1f0d0758e6c274622a377092549df05f6a4fe6939cbc754939169"));
+        assert(consensus.hashGenesisBlock == uint256S("0x4b6c3362e2f2a6b6317c85ecaa0f5415167e2bb333d2bf3d3699d73df613b91f"));
+        assert(genesis.hashMerkleRoot == uint256S("0x97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -253,8 +254,8 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0, uint256S("8e8b634d2f2800398261b7adcfbb6ace490e1746e62123ec2bf8010f9fc98b17")),
-            1396255061,
+            ( 0, uint256S("4b6c3362e2f2a6b6317c85ecaa0f5415167e2bb333d2bf3d3699d73df613b91f")),
+            1536656597,
             1,
             300
         };
