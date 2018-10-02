@@ -40,9 +40,10 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     if (Params().NetworkIDString() == CBaseChainParams::TESTNET ) {
         nActualTimespan = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
 
-        // 99 / 66 = 1.5 AKA 50% difficulty limiter
-        nActualTimespanMax = nTargetTimespan * 99 / 66;
-        nActualTimespanMin = nTargetTimespan * 66 / 99;
+        // 99 / 66 = 1.5 AKA 50% difficulty change limiter
+        // 100 / 75 = 1.25 AKA 25% difficulty change limiter
+        nActualTimespanMax = nTargetTimespan * 100 / 75;
+        nActualTimespanMin = nTargetTimespan * 75 / 100;
 
         unsigned int shortInterval = 2;
         unsigned int mediumInterval = 127;
@@ -167,7 +168,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     if (nHeight >= params.nForkThree) {
         nInterval = 480;
-
+return nInterval;
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < nInterval && i < nHeight - 1; i++) {
             pindexFirstLong = pindexFirstLong->pprev;
