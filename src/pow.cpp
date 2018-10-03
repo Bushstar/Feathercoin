@@ -47,7 +47,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
         unsigned int shortInterval = 2;
         unsigned int mediumInterval = 127;
-        unsigned int longInterval = 480;
+        unsigned int longInterval = 240;
 
         unsigned int shortWeight = 256;
         unsigned int mediumWeight = 0;
