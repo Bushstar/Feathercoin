@@ -49,7 +49,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         unsigned int mediumInterval = 127;
         unsigned int longInterval = 480;
 
-        unsigned int shortWeight = 512;
+        unsigned int shortWeight = 256;
         unsigned int mediumWeight = 0;
         unsigned int longWeight = 3;
 
@@ -74,6 +74,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
         nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
 
+        // damping 33% 
         nActualTimespan = nActualTimespanAvg + (2 * nTargetTimespan);
         nActualTimespan /= 3;
 
@@ -98,7 +99,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             bnNew = bnPowLimit;
 
         return bnNew.GetCompact();
-    }
+    } // if testnet
 
     // 4th Hard fork, reset difficulty
     if (nHeight == params.nForkFour)
