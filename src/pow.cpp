@@ -50,7 +50,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         unsigned int longInterval = 480;
 
         unsigned int shortWeight = 512;
-        unsigned int mediumWeight = 7;
+        unsigned int mediumWeight = 0;
         unsigned int longWeight = 3;
 
         const CBlockIndex* pindexFirstLong = pindexLast;
