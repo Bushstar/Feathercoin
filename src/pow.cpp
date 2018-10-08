@@ -56,7 +56,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         unsigned int longWeight = 3;
         
         
-        if (nHeight >= tForkOne{
+        if (nHeight >= tForkOne){
             nActualTimespanMin = nTargetTimespan * 50 / 100;
             mediumInterval = 127;
             unsigned int mediumWeight = 3;
