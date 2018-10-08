@@ -44,14 +44,19 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         // 100 / 75 = 1.25 AKA 25% difficulty change limiter
         nActualTimespanMax = nTargetTimespan * 100 / 75;
         nActualTimespanMin = nTargetTimespan * 75 / 100;
+        
+        if (nHeight >= 1600) {
+            nActualTimespanMin = nTargetTimespan * 50 / 100
+        }
+        
 
         unsigned int shortInterval = 2;
-        unsigned int mediumInterval = 127;
+        unsigned int mediumInterval = 120;
         unsigned int longInterval = 240;
 
         unsigned int shortWeight = 256;
-        unsigned int mediumWeight = 0;
-        unsigned int longWeight = 3;
+        unsigned int mediumWeight = 3;
+        unsigned int longWeight = 0;
 
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
