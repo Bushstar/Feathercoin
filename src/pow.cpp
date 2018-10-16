@@ -75,7 +75,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             
             //damping 50%
             dampingFactor = 1;
-            dampingDivisor = 2
+            dampingDivisor = 2;
         }
 
         
