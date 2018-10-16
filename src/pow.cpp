@@ -45,7 +45,8 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanMax = nTargetTimespan * 100 / 75;
         nActualTimespanMin = nTargetTimespan * 75 / 100;
         
-        unsigned int tForkOne = 1600;
+        unsigned int tForkOne = 1600,
+                     tforkTwo = 1600;
 
         unsigned int shortInterval = 2;
         unsigned int mediumInterval = 127;
@@ -55,12 +56,26 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         unsigned int mediumWeight = 0;
         unsigned int longWeight = 3;
         
+        // damping 33%
+        unsigned int dampingFactor = 2;
+        unsigned int dampingDivisor = 3;
         
         if (nHeight >= tForkOne){
             nActualTimespanMin = nTargetTimespan * 50 / 100;
             mediumInterval = 127;
-            unsigned int mediumWeight = 3;
-            unsigned int longWeight = 0;
+            mediumWeight = 3;
+            longWeight = 0;
+        }
+        if (nHeight >= tForkTwo){
+            shortInterval = 3;
+            mediumInterval = 60;
+            mediumWeight = 3
+            longInterval = 120;
+            longWeight = 1;
+            
+            //damping 50%
+            dampingFactor = 1;
+            dampingDivisor = 2
         }
 
         
@@ -85,9 +100,15 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
         nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
 
+        // damping 
+        nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
+        nActualTimespan /= dampingDivisor;
+        
+        if (nHeight >= tForkTwo){
         // damping 33% 
-        nActualTimespan = nActualTimespanAvg + (2 * nTargetTimespan);
-        nActualTimespan /= 3;
+            nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
+            nActualTimespan /= dampingDivisor;
+        }
 
         if(nActualTimespan < nActualTimespanMin)
             nActualTimespan = nActualTimespanMin;
