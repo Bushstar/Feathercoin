@@ -104,11 +104,11 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
         nActualTimespan /= dampingDivisor;
         
-        if (nHeight >= tForkTwo){
-        // damping 33% 
-            nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
-            nActualTimespan /= dampingDivisor;
-        }
+        
+        // damping 
+        nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
+        nActualTimespan /= dampingDivisor;
+        
 
         if(nActualTimespan < nActualTimespanMin)
             nActualTimespan = nActualTimespanMin;
