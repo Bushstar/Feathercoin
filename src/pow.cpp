@@ -46,7 +46,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanMin = nTargetTimespan * 75 / 100;
         
         unsigned int tForkOne = 1600,
-                     tforkTwo = 1900;
+                     tForkTwo = 1900;
 
         unsigned int shortInterval = 2;
         unsigned int mediumInterval = 127;
