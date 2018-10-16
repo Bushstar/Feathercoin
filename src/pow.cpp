@@ -69,7 +69,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         if (nHeight >= tForkTwo){
             shortInterval = 3;
             mediumInterval = 60;
-            mediumWeight = 3
+            mediumWeight = 3;
             longInterval = 120;
             longWeight = 1;
             
