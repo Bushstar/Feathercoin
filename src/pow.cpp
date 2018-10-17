@@ -100,10 +100,6 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
         nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
 
-        // damping 
-        nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
-        nActualTimespan /= dampingDivisor;
-        
         
         // damping 
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
