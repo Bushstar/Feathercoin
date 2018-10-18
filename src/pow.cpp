@@ -59,13 +59,13 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         int dampingFactor = 2;
         int dampingDivisor = 3;
         
-        if (nHeight >= tForkOne){
+//        if (nHeight >= tForkOne){
             nActualTimespanMin = nTargetTimespan * 50 / 100;
             mediumInterval = 127;
             mediumWeight = 3;
             longWeight = 0;
-        }
-        if (nHeight >= tForkTwo){
+//        }
+//        if (nHeight >= tForkTwo){
             shortInterval = 3;
             mediumInterval = 60;
             mediumWeight = 3;
@@ -75,7 +75,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             //damping 50%
             dampingFactor = 1;
             dampingDivisor = 2;
-        }
+//        }
 
         
         const CBlockIndex* pindexFirstLong = pindexLast;
