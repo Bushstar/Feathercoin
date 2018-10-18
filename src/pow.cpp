@@ -45,20 +45,19 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespanMax = nTargetTimespan * 100 / 75;
         nActualTimespanMin = nTargetTimespan * 75 / 100;
         
-        unsigned int tForkOne = 1600,
-                     tForkTwo = 1900;
+        int tForkOne = 30,
+            tForkTwo = 90;
 
-        unsigned int shortInterval = 2;
-        unsigned int mediumInterval = 127;
-        unsigned int longInterval = 240;
-
-        unsigned int shortWeight = 256;
-        unsigned int mediumWeight = 0;
-        unsigned int longWeight = 3;
+        int shortInterval = 2;
+        int mediumInterval = 127;
+        int longInterval = 240;
+        int shortWeight = 256;
+        int mediumWeight = 0;
+        int longWeight = 3;
         
         // damping 33%
-        unsigned int dampingFactor = 2;
-        unsigned int dampingDivisor = 3;
+        int dampingFactor = 2;
+        int dampingDivisor = 3;
         
         if (nHeight >= tForkOne){
             nActualTimespanMin = nTargetTimespan * 50 / 100;
