@@ -68,13 +68,16 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 //        if (nHeight >= tForkTwo){
             shortInterval = 3;
             mediumInterval = 60;
-            mediumWeight = 3;
+	    // removed after test 2018_11_12
+            //mediumWeight = 3;
             longInterval = 120;
             longWeight = 1;
             
-            
+   //        if (nHeight >= tForkThree){ 
             // change to 4 minute max timespan to be used for diff calculation 2018/11/6
             nActualTimespanMax = nTargetTimespan * 100 / 25;
+     //      }
+           
             //damping 50%
             dampingFactor = 1;
             dampingDivisor = 2;
