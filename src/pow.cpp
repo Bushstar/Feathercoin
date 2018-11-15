@@ -42,47 +42,22 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
         // 99 / 66 = 1.5 AKA 50% difficulty change limiter
         // 100 / 75 = 1.25 AKA 25% difficulty change limiter
-        nActualTimespanMax = nTargetTimespan * 100 / 75;
-        nActualTimespanMin = nTargetTimespan * 75 / 100;
+      //  nActualTimespanMax = nTargetTimespan * 100 / 25;
+      //  nActualTimespanMin = nTargetTimespan * 50 / 100;
         
-        int tForkOne = 30,
-            tForkTwo = 90;
 
-        int shortInterval = 2;
-        int mediumInterval = 127;
-        int longInterval = 240;
+        int shortInterval = 3;
+        int mediumInterval = 60;
+        int longInterval = 120;
         int shortWeight = 256;
         int mediumWeight = 0;
-        int longWeight = 3;
+        int longWeight = 2;
         
         // damping 33%
-        int dampingFactor = 2;
-        int dampingDivisor = 3;
-        
-//        if (nHeight >= tForkOne){
-            nActualTimespanMin = nTargetTimespan * 50 / 100;
-            mediumInterval = 127;
-            mediumWeight = 3;
-            longWeight = 0;
-//        }
-//        if (nHeight >= tForkTwo){
-            shortInterval = 3;
-            mediumInterval = 60;
-	    // removed after test 2018_11_12
-            //mediumWeight = 3;
-            longInterval = 120;
-            longWeight = 1;
+        int dampingFactor = 1;
+        int dampingDivisor = 2;
+    
             
-   //        if (nHeight >= tForkThree){ 
-            // change to 4 minute max timespan to be used for diff calculation 2018/11/6
-            nActualTimespanMax = nTargetTimespan * 100 / 25;
-     //      }
-           
-            //damping 50%
-            dampingFactor = 1;
-            dampingDivisor = 2;
-//        }
-
         
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
