@@ -54,8 +54,8 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         int longWeight = 2;
         
         // damping 33%
-        int dampingFactor = 1;
-        int dampingDivisor = 2;
+        int dampingFactor = 2;
+        int dampingDivisor = 3;
     
             
         
