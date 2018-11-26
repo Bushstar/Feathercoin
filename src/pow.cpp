@@ -37,6 +37,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     /*
     / New eHRC from start for testnet
     */
+    int tForkOne= 1414;
     if (Params().NetworkIDString() == CBaseChainParams::TESTNET ) {
         nActualTimespan = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
 
@@ -57,7 +58,11 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         int dampingFactor = 2;
         int dampingDivisor = 3;
     
-            
+        if (nHeight >=tForkOne) {
+            shortWeight = 64;
+            mediumWeight= 2;
+            longWeight= 1;
+        }
         
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
@@ -77,9 +82,10 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         if (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime() != 0)
             nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime()) / longInterval;
 
-        nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
-        nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
-
+        //nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
+        //nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
+        nActualTimespanAvg = (nActualTimespanShort * shortWeight/shortInterval) + (nActualTimespanMedium * mediumWeight/mediumInterval) + (nActualTimespanLong * longWeight/longInterval);
+        nActualTimespanAvg /= 3;
         
         // damping 
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
