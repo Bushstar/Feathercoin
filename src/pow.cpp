@@ -82,10 +82,8 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         if (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime() != 0)
             nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime()) / longInterval;
 
-        //nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
-        //nActualTimespanAvg /= shortWeight + mediumWeight + longWeight;
-        nActualTimespanAvg = (nActualTimespanShort * shortWeight/shortInterval) + (nActualTimespanMedium * mediumWeight/mediumInterval) + (nActualTimespanLong * longWeight/longInterval);
-        nActualTimespanAvg /= 3;
+        nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
+        nActualTimespanAvg /= (shortWeight + mediumWeight + longWeight);
         
         // damping 
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
