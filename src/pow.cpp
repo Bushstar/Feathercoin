@@ -58,11 +58,11 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         int dampingFactor = 2;
         int dampingDivisor = 3;
     
-        if (nHeight >=tForkOne) {
+       // if (nHeight >=tForkOne) {
             shortWeight = 64;
             mediumWeight= 2;
             longWeight= 1;
-        }
+     //   }
         
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
