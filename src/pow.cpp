@@ -59,15 +59,24 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         int dampingDivisor = 3;
     
        // if (nHeight >=tForkOne) {
+       //  2018_12_04
             shortWeight = 64;
             mediumWeight= 2;
             longWeight= 1;
      //   }
             // if (nHeight >=tForkTwo) {
+            // 2018_12_08
            shortInterval = 10;
            // damping to 25%
            dampingFactor = 3;
            dampingDivisor = 4;
+
+     //   } // if (nHeight >=tForkThree) {
+            // 2018_12_10
+           mediumWeight= 4;
+           // damping to 20% 
+           dampingFactor = 4;
+           dampingDivisor = 5;
 
      //   }
             
@@ -97,7 +106,15 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
         nActualTimespan /= dampingDivisor;
         
+        // if (nHeight >=tForkThree) {
+            // 2018_12_10
+        //diff downward change limiter  to 50% of long average
+            nActualTimespanMax = nActualTimespanLong*2;
 
+     //   }
+     
+     
+     
         if(nActualTimespan < nActualTimespanMin)
             nActualTimespan = nActualTimespanMin;
         if(nActualTimespan > nActualTimespanMax)
