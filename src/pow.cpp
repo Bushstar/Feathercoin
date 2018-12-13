@@ -109,7 +109,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         // if (nHeight >=tForkThree) {
             // 2018_12_10
         //diff downward change limiter  to 50% of long average
-            nActualTimespanMax = nActualTimespanLong*2;
+	   if (nActualTimespanLong > 0 ) {
+            	nActualTimespanMax = nActualTimespanLong*2;
+	   }
 
      //   }
      
