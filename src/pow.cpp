@@ -29,9 +29,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     int pindexFirstShortTime = 0;
     int pindexFirstMediumTime = 0;
-    int nActualTimespanShort = 0;
-    int nActualTimespanMedium = 0;
-    int nActualTimespanLong = 0;
+    int nActualTimespanShort = nTargetTimespan;
+    int nActualTimespanMedium = nTargetTimespan;
+    int nActualTimespanLong = nTargetTimespan;
     int nActualTimespanAvg = 0;
 
     /*
@@ -140,6 +140,16 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return bnNew.GetCompact();
     } // if testnet
 
+    /*
+     * 
+     * 
+     * 
+     * Main net 
+     * 
+     * 
+     * 
+     */
+    
     // 4th Hard fork, reset difficulty
     if (nHeight == params.nForkFour)
         return UintToArith256(params.powNeoScryptLimit).GetCompact();
