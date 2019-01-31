@@ -37,7 +37,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     /*
     / New eHRC from start for testnet
     */
-    int tForkOne= 1414;
+    
     if (Params().NetworkIDString() == CBaseChainParams::TESTNET ) {
         nActualTimespan = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
 
@@ -79,7 +79,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
            dampingDivisor = 5;
 
      //   }
-            
+           
+           // Jan 31/2019 long interval to 2 days
+            longInterval = 2880;  // = 60*48
         
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
