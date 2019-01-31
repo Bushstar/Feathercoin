@@ -80,9 +80,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
      //   }
            
-           // Jan 31/2019 long interval to 2 days
+           // Jan 31/2019 long interval to 2 days, medium to 4 hours
             longInterval = 2880;  // = 60*48
-        
+            mediumInterval = 240;
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
             pindexFirstLong = pindexFirstLong->pprev;
