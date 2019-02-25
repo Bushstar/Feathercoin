@@ -47,42 +47,20 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
       //  nActualTimespanMin = nTargetTimespan * 50 / 100;
         
 
-        int shortInterval = 3;
-        int mediumInterval = 60;
-        int longInterval = 120;
-        int shortWeight = 256;
-        int mediumWeight = 0;
-        int longWeight = 2;
+        int shortInterval = 10;
+        int mediumInterval = 240;
+        int longInterval = 2880;  // = 60*48
+        int shortWeight = 64;
+        int mediumWeight = 4;
+        int longWeight = 1;
         
-        // damping to 33%
-        int dampingFactor = 2;
-        int dampingDivisor = 3;
+        // damping to 30%
+        int dampingFactor = 4;
+        int dampingDivisor = 5;
     
-       // if (nHeight >=tForkOne) {
-       //  2018_12_04
-            shortWeight = 64;
-            mediumWeight= 2;
-            longWeight= 1;
-     //   }
-            // if (nHeight >=tForkTwo) {
-            // 2018_12_08
-           shortInterval = 10;
-           // damping to 25%
-           dampingFactor = 3;
-           dampingDivisor = 4;
-
-     //   } // if (nHeight >=tForkThree) {
-            // 2018_12_10
-           mediumWeight= 4;
-           // damping to 20% 
-           dampingFactor = 4;
-           dampingDivisor = 5;
-
-     //   }
+      
            
-           // Jan 31/2019 long interval to 2 days, medium to 4 hours
-            longInterval = 2880;  // = 60*48
-            mediumInterval = 240;
+          
         const CBlockIndex* pindexFirstLong = pindexLast;
         for(int i = 0; pindexFirstLong && i < (longInterval - 1)&& i < nHeight - 1; i++) {
             pindexFirstLong = pindexFirstLong->pprev;
