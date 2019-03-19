@@ -35,7 +35,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     int nActualTimespanAvg = 0;
 
     /*
-    / New eHRC from start for testnet
+    / Grin paramters  for testnet
     */
     
     if (Params().NetworkIDString() == CBaseChainParams::TESTNET ) {
@@ -43,20 +43,22 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
         // 99 / 66 = 1.5 AKA 50% difficulty change limiter
         // 100 / 75 = 1.25 AKA 25% difficulty change limiter
-      //  nActualTimespanMax = nTargetTimespan * 100 / 25;
-      //  nActualTimespanMin = nTargetTimespan * 50 / 100;
-        
+        nActualTimespanMax = nTargetTimespan * 100 / 50;
+        nActualTimespanMin = nTargetTimespan * 50 / 100;
+      
+        /*  set paramter to grin parms
+         */
 
-        int shortInterval = 10;
+        int shortInterval = 60;
         int mediumInterval = 240;
-        int longInterval = 2880;  // = 60*48
-        int shortWeight = 64;
-        int mediumWeight = 4;
+        int longInterval =60;
+        int shortWeight = 0;
+        int mediumWeight = 0;
         int longWeight = 1;
         
         // damping to 30%
-        int dampingFactor = 4;
-        int dampingDivisor = 5;
+        int dampingFactor = 2;
+        int dampingDivisor = 3;
     
       
            
@@ -69,30 +71,24 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             if (i == mediumInterval - 1)
                 pindexFirstMediumTime = pindexFirstLong->GetBlockTime();
         }
-
+/* not used in Grin
         if (pindexLast->GetBlockTime() - pindexFirstShortTime != 0)
             nActualTimespanShort = (pindexLast->GetBlockTime() - pindexFirstShortTime) / shortInterval;
 
         if (pindexLast->GetBlockTime() - pindexFirstMediumTime != 0)
             nActualTimespanMedium = (pindexLast->GetBlockTime() - pindexFirstMediumTime) / mediumInterval;
-
+*/
         if (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime() != 0)
             nActualTimespanLong = (pindexLast->GetBlockTime() - pindexFirstLong->GetBlockTime()) / longInterval;
 
-        nActualTimespanAvg = (nActualTimespanShort * shortWeight) + (nActualTimespanMedium * mediumWeight) + (nActualTimespanLong * longWeight);
-        nActualTimespanAvg /= (shortWeight + mediumWeight + longWeight);
+        nActualTimespanAvg =  nActualTimespanLong;
+        
         
         // damping 
         nActualTimespan = nActualTimespanAvg + (dampingFactor * nTargetTimespan);
         nActualTimespan /= dampingDivisor;
         
-        // if (nHeight >=tForkThree) {
-            // 2018_12_10
-        //diff downward change limiter  to 50% of long average
-	   if (nActualTimespanLong > 0 ) {
-            	nActualTimespanMax = nActualTimespanLong*2;
-	   }
-
+       
      //   }
      
      
